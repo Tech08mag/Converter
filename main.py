@@ -1,4 +1,4 @@
-import ffmpeg, os, sys
+import ffmpeg, os, sys, shutil
 from tkinter import filedialog
 import customtkinter
 from pathlib import Path
@@ -10,6 +10,24 @@ class Error(customtkinter.CTkToplevel):
         self.title("System")
 
         self.label = customtkinter.CTkLabel(self, text="Es darf kein Feld leer sein!")
+        self.label.pack(padx=20, pady=20)
+
+class Success(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+        self.title("System")
+
+        self.label = customtkinter.CTkLabel(self, text="Die Konvertierung wurde gestartet")
+        self.label.pack(padx=20, pady=20)
+
+class Finished(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+        self.title("System")
+
+        self.label = customtkinter.CTkLabel(self, text="Die Konvertierung wurde erfolgreich beendet!")
         self.label.pack(padx=20, pady=20)
 
 class App (customtkinter.CTk):
@@ -34,15 +52,14 @@ class App (customtkinter.CTk):
         
     
     def convert(self):
-        path = filedialog.askopenfilename(title="Choose file", initialdir=Path(sys.executable))
-        fileextention = self.convertto.get()
+        '''Convert a file to a requested format'''
+        fileextention = self.convertto.get().lower()
         new_file_name = self.new_file_name.get()
+        
         if fileextention != "" and new_file_name != "":
-            (
-	        ffmpeg.input(f'{path}')
-	        .output(f"{new_file_name}.{fileextention}")
-	        .run()
-            )
+            path = filedialog.askopenfilename(title="Choose file", initialdir=Path(sys.executable))
+            (ffmpeg.input(f'{path}').output(f"{new_file_name}.{fileextention}").run())
+        
         else:
             Error()
 
